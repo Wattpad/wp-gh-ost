@@ -423,6 +423,11 @@ func (e *RowsEvent) decodeValue(data []byte, tp byte, meta uint16) (v interface{
 	case MYSQL_TYPE_TIMESTAMP:
 		n = 4
 		t := binary.LittleEndian.Uint32(data)
+
+		if t == 0 { // commented by Anthony Gonzalez. Yes I know about `git blame`
+			return "0000-00-00 00:00:00", n, nil
+		}
+
 		v = time.Unix(int64(t), 0)
 	case MYSQL_TYPE_TIMESTAMP2:
 		v, n, err = decodeTimestamp2(data, meta, e.timestampStringLocation)
